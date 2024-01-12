@@ -1,0 +1,118 @@
+---
+title: "Beta"
+author: "Negin_Kazemian_23145097"
+date: '2020-01-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r pressure, echo=FALSE}
+install.packages("devtools")
+install.packages("showtext")
+```
+
+```{r pressure, echo=FALSE}
+library(vegan)
+library(ggplot2)
+library(ape)
+library(philentropy)
+library(ecodist)
+library(showtext)
+```
+
+
+```{r pressure, echo=FALSE}
+filename="otu_table_g_reversed.csv"
+data= read.csv(filename)
+data=data[apply(data[,-1], 1, function(x) !all(x==0)),]
+#beta_data= data.frame(data)
+beta_data= as.matrix(data)
+#beta= distance(beta_data, method="Brays")
+#beta= JSD(beta_data, unit="log2")
+beta= vegdist(beta_data,index="bray",binary=TRUE)
+mds <- metaMDS(beta)
+mds_data <- as.data.frame(mds$points)
+
+cmd= cmdscale(beta,eig = TRUE,k=2)
+
+explainvar1= round(cmd$eig[1]/sum(cmd$eig),2)*100
+explainvar2= round(cmd$eig[2]/sum(cmd$eig),2)*100
+
+explainvar1= paste("PCo1",explainvar1,"%",sep=" ")
+explainvar2= paste("PCo2",explainvar2,"%",sep=" " )
+
+mds_data <- as.data.frame(mds$points)
+write.table(mds_data,file="Brays.csv",row.names=FALSE,na="",col.names=TRUE,sep=",")
+
+```
+
+```{r pressure, echo=FALSE}
+d= density(mds_data$MDS1)
+df= read.csv("Bray.csv")
+data= data.frame(df)
+
+pdf("Bray_Density_NICE.pdf")
+#ggplot(data, aes(x = MDS1,y=MDS2,color=Type))+geom_point(size=3)+geom_vline(xintercept = 0,lty="dashed")+geom_hline(yintercept = 0,lty="dashed")+xlab(explainvar1)+ylab(explainvar2)+theme_light()+theme(panel.border = element_rect(color="black",size=2))
+
+font_add(family="Arial", regular="Arial.ttf")
+showtext_auto()
+data$Converter <- factor(data$Converter,levels = c("Non", "Low", "High"))
+ggplot(data, aes(x=MDS2,fill=Converter))+ geom_density(alpha=0.8)+xlab("Bray-Curtis Dissimilarity") + scale_y_continuous(limits= c(0,12))+ scale_fill_brewer(palette="BrBG")+ theme_classic() + theme( axis.line = element_line( 
+                      size = 0.7, linetype = "solid")) + theme(text = element_text(family="Arial", size = 12), axis.text=element_text(family="Arial", size=12), axis.title=element_text(family="Arial", size=12))
+
+dev.off()
+#out= pcoa(beta, correction="none", rn=NULL)
+#b= biplot(out, Y=NULL, plot.axes = c(1,2), dir.axis1=6,dir.axis2=6, rn=NULL, main=NULL)
+
+#ggplot(data, aes(x = MDS1,y=MDS2,color=Type))+geom_point(size=3)+geom_vline(xintercept = 0,lty="dashed")+geom_hline(yintercept = 0,lty="dashed")+xlab(explainvar1)+ylab(explainvar2)+theme_light()+theme(panel.border = element_rect(color="black",size=2))+stat_ellipse(data,geom = "polygon", mapping=aes(x = MDS1,y=MDS2,color=Type),alpha=0.3)
+```
+
+```{r pressure, echo=FALSE}
+{
+  file="otu_table_g_reversed.csv"
+  #string= readline("Enter name: ")
+  #ext=".csv"
+  #filename=paste(file,string,ext,sep="")
+  data= read.csv(file)
+  #beta_data= as.matrix(data)
+  data= data.frame(data)
+  #data=data[apply(data[,-1], 1, function(x) !all(x==0)),]
+  #beta_new= vegdist(data,index="Bray",binary=TRUE)
+  #beta_new= distance(beta_data, method="JSD", unit="log2")
+  beta_new= JSD(beta_data, unit="log2")
+  
+  ###PERMNOVA and ANOSIM
+  file1="Jensen.csv"
+ #filename1=paste(file1,string,ext,sep="")
+  data1= read.csv(file1)
+  beta= data.frame(data1)
+  
+  p=adonis(beta_new ~ beta$Type)###PERMNOVA
+  #p=anosim(beta_new, beta$Type)###ANOSIM
+  print(p)
+  #option= readline("wanna continue: ")
+}
+```
