@@ -1,33 +1,4 @@
----
-title: "ACE"
-author: "Negin_Kazemian_23145097"
-date: '2020-01-23'
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ```{r pressure, echo=FALSE}
 install.packages("ggpubr")
@@ -45,7 +16,7 @@ library(showtext)
 ```
 
 ```{r pressure, echo=FALSE}
-filename="Combined.csv"
+filename="filename.csv"
 attenuation=read.csv(filename)
 exceldata = attenuation 
 dfdata = data.frame(exceldata)
@@ -56,26 +27,13 @@ font_add(family="Arial", regular="Arial.ttf")
 showtext_auto()
 dfdata$Conversion <- factor(dfdata$Conversion,levels = c("Non", "High"))
 dfdata$Bacteria <- factor(dfdata$Bacteria,levels = c("B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"))
-pdf('Letsee-BrBG.pdf', width = 4, height=4)
+pdf('filename.pdf', width = 4, height=4)
 ggplot(dfdata, aes(x=Bacteria, y=Relative, fill=Conversion)) + 
     geom_boxplot(width=0.5) + theme_classic()+ scale_fill_brewer(palette="BrBG") + theme(text = element_text(family="Arial", size = 12), axis.text=element_text(family="Arial", size=12), axis.title=element_text(family="Arial", size=12)) + ylab("Relative Abundance")
 ```
 
 ```{r pressure, echo=FALSE}
-dfdata$Conversion <- factor(dfdata$Conversion,levels = c("Non", "High"))
-dfdata$Bacteria <- factor(dfdata$Bacteria,levels = c("B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"))
-z="Conversion"
-pdf('Combined3.pdf', width = 4, height=4)
-ggplot(dfdata, aes(x=Bacteria, y=Relative, fill=Conversion)) + 
-    geom_jitter(
-  aes(color = Conversion), 
-  position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.8),
-  size = 1.2, 
-  ) + theme_classic() + scale_fill_brewer(palette="Greens")
-```
-
-```{r pressure, echo=FALSE}
-filename="Clost2.csv"
+filename="filename.csv"
 norm=read.csv(filename)
 exceldata = norm 
 dfdata = data.frame(exceldata)
@@ -107,4 +65,15 @@ summary(one.way)
 ```{r pressure, echo=FALSE}
 TukeyHSD(one.way, which = "Conversion")
 ```
+
+```{r pressure, echo=FALSE}
+mw= wilcox.test(Sulf ~ Converter, data=dfdata)
+mw
+```
+
+```{r pressure, echo=FALSE}
+mw=t.test(Sec ~ Converter, data=dfdata)
+mw
+```
+
 
