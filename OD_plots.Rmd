@@ -1,0 +1,26 @@
+## R Markdown
+
+```{r pressure, echo=FALSE}
+install.packages("ggpubr")
+install.packages("viridis")
+install.packages("hrbrthemes")
+```
+
+```{r pressure, echo=FALSE}
+library(ggplot2)
+library(viridis)
+library(hrbrthemes)
+```
+```{r pressure, echo=FALSE}
+filename="filename.csv"
+attenuation=read.csv(filename)
+exceldata = attenuation 
+dfdata = data.frame(exceldata)
+dfdata
+```
+```{r pressure, echo=FALSE}
+pdf('filename.pdf', width = 7, height=5)
+ggplot(dfdata, aes(x=Time, y=OD, color=Group)) +
+  geom_line(linewidth=2)+theme_classic()+scale_x_continuous(breaks = c(600, 1200, 1800, 2400,3000))+theme(legend.position="bottom")+guides(color = guide_legend(override.aes = list(size = 3)))+scale_colour_manual(values = c("0%"="gold", "10%Cop"="darkgoldenrod2", "20%Cop"="darkgoldenrod", "40%Cop"="darkgoldenrod4"))
+```
+
