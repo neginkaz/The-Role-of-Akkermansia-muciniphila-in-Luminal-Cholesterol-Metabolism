@@ -1,0 +1,79 @@
+---
+title: "ACE"
+author: "Negin_Kazemian_23145097"
+date: '2020-01-23'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r pressure, echo=FALSE}
+install.packages("ggpubr")
+install.packages("FSA")
+```
+
+```{r pressure, echo=FALSE}
+library(ggplot2)
+library(vegan)
+library(FSA)
+library(showtext)
+```
+
+```{r pressure, echo=FALSE}
+filename="attenuation_Sulf.csv"
+attenuation=read.csv(filename)
+exceldata = attenuation 
+dfdata = data.frame(exceldata)
+dfdata
+```
+
+```{r pressure, echo=FALSE}
+font_add(family="Arial", regular="Arial.ttf")
+showtext_auto()
+dfdata$Converter <- factor(dfdata$Converter,levels = c("Non","High"))
+pdf('Sulf.pdf', width = 4, height=4)
+ggplot(dfdata, aes(x=Converter, y=Sulf, fill=Converter)) + 
+    geom_boxplot(width=0.5) + theme_classic()+ scale_fill_brewer(palette="BrBG") + theme(text = element_text(family="Arial", size = 12), axis.text=element_text(family="Arial", size=12), axis.title=element_text(family="Arial", size=12)) + theme(legend.position = "none") + ylab("Sulfated (umol/g)")
+```
+
+```{r pressure, echo=FALSE}
+filename="attenuation_Sulf.csv"
+norm=read.csv(filename)
+exceldata = norm 
+dfdata = data.frame(exceldata)
+dfdata
+shapiro.test(dfdata$Sulf)
+#so data not normal since p<0.05
+```
+
+```{r pressure, echo=FALSE}
+mw= wilcox.test(Sulf ~ Converter, data=dfdata)
+mw
+```
+
+```{r pressure, echo=FALSE}
+mw=t.test(Sec ~ Converter, data=dfdata)
+mw
+```
