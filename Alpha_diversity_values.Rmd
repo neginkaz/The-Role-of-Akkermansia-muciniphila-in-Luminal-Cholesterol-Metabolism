@@ -1,7 +1,5 @@
 ## R Markdown
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
 ```{r pressure, echo=FALSE}
 install.packages("vegan")
 install.packages("ggplot2")
